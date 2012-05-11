@@ -1,3 +1,20 @@
 # Include your customized HAL commands here
 # The commands in this file are run after the AXIS GUI (including PyVCP panel) starts
 
+# **** Setup of spindle speed display using pyvcp -START ****
+# **** Use COMMANDED spindle velocity from EMC because no spindle encoder was specified
+# **** COMANDED velocity is signed so we use absolute component (abs.0) to remove sign
+
+net laser-freq => pyvcp.ppi
+net laser-power-cmd => pyvcp.power
+
+net laser-master => pyvcp.laser-master
+net laser-raster => pyvcp.laser-raster
+net laser-dout => pyvcp.laser-dout
+net laser-magic-z => pyvcp.laser-magic-z
+net laser-pulsed => pyvcp.laser-pulsed
+net laser-final => pyvcp.laser-final
+
+net z-to-zero pyvcp.z-to-zero => halui.mdi-command-00
+net xy-touchoff pyvcp.xy-touchoff => halui.mdi-command-01
+

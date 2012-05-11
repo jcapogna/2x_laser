@@ -2,28 +2,34 @@
 # If you make changes to this file, they will be
 # overwritten when you run stepconf again
 
-loadrt threads name1=laser-thread period1=[EMCMOT]BASE_PERIOD
+loadrt threads name1=base-thread period1=[EMCMOT]BASE_PERIOD name2=charge-pump-thread period2=100000
 
 loadrt trivkins
-loadrt [EMCMOT]EMCMOT base_period_nsec=[EMCMOT]BASE_PERIOD servo_period_nsec=[EMCMOT]SERVO_PERIOD num_joints=[TRAJ]AXES
+loadrt [EMCMOT]EMCMOT servo_period_nsec=[EMCMOT]SERVO_PERIOD num_joints=[TRAJ]AXES
 loadrt probe_parport
 loadrt hal_parport cfg="0x378 out"
-setp parport.0.reset-time 1000
+# setp parport.0.reset-time 1200
 loadrt stepgen step_type=0,0,0
 loadrt pwmgen output_type=0
+loadrt charge_pump
+loadrt abs count=1
 
 addf parport.0.read base-thread
 addf stepgen.make-pulses base-thread
 # need capture-position in laser-thread for raster engraving:
-addf stepgen.capture-position laser-thread
+# addf stepgen.capture-position base-thread
 addf pwmgen.make-pulses base-thread
 addf parport.0.write base-thread
-addf parport.0.reset base-thread
+# addf parport.0.reset base-thread
 
+addf stepgen.capture-position servo-thread
 addf motion-command-handler servo-thread
 addf motion-controller servo-thread
 addf stepgen.update-freq servo-thread
 addf pwmgen.update servo-thread
+addf abs.0 servo-thread
+
+addf charge-pump charge-pump-thread
 
 net laser-power-cmd <= motion.analog-out-00 => pwmgen.0.value
 net laser-pwm <= pwmgen.0.pwm
@@ -35,75 +41,80 @@ setp pwmgen.0.scale 1
 setp pwmgen.0.offset 0
 setp pwmgen.0.dither-pwm true
 
-net dout-02 <= motion.digital-out-02
-net din-02 => motion.digital-in-02
+net coolant-mist <= iocontrol.0.coolant-mist
+net estop-out <= iocontrol.0.user-enable-out
+net estop-out => iocontrol.0.emc-enable-in
 
-net laser-chiller => parport.0.pin-01-out
+net estop-out => parport.0.pin-01-out
 net xstep => parport.0.pin-02-out
-setp parport.0.pin-02-out-reset 1
+# setp parport.0.pin-02-out-reset 1
 net xdir => parport.0.pin-03-out
-setp parport.0.pin-03-out-invert 1
+setp parport.0.pin-03-out-invert 0
 net ystep => parport.0.pin-04-out
-setp parport.0.pin-04-out-reset 1
+# setp parport.0.pin-04-out-reset 1
 net ydir => parport.0.pin-05-out
 setp parport.0.pin-05-out-invert 1
-net ustep => parport.0.pin-06-out
-setp parport.0.pin-06-out-reset 1
-net udir => parport.0.pin-07-out
+net wstep => parport.0.pin-06-out
+# setp parport.0.pin-06-out-reset 1
+net wdir => parport.0.pin-07-out
 setp parport.0.pin-07-out-invert 1
-net dout-02 => parport.0.pin-08-out
+net xenable => parport.0.pin-08-out
+setp parport.0.pin-08-out-invert 1
 net laser-pwm => parport.0.pin-14-out
-net xenable => parport.0.pin-16-out
+net coolant-mist => parport.0.pin-16-out
 net laser-final => parport.0.pin-17-out
 
-net home-x <= parport.0.pin-10-in-not
-net home-y <= parport.0.pin-11-in-not
+net both-w <= parport.0.pin-12-in-not
+net max-home-y <= parport.0.pin-13-in-not
+net min-home-x <= parport.0.pin-15-in-not
 
-net din-02 <= parport.0.pin-13-in
+# charge pump output on pin 9
+net charge-pump-out-09 charge-pump.out => parport.0.pin-09-out
 
-# based on Pololu drivers with Allegro drivers (1us ea hi/lo step, 200ns dir setup/hold)
+# Keling 4030 driver 1.2us step, 5us dir setup
 setp stepgen.0.position-scale [AXIS_0]SCALE
-setp stepgen.0.steplen 1000
-setp stepgen.0.stepspace 0
-setp stepgen.0.dirhold 200
-setp stepgen.0.dirsetup 200
+setp stepgen.0.steplen 1200
+setp stepgen.0.stepspace 1200
+setp stepgen.0.dirhold 1000
+setp stepgen.0.dirsetup 5000
 setp stepgen.0.maxaccel [AXIS_0]STEPGEN_MAXACCEL
 net xpos-cmd axis.0.motor-pos-cmd => stepgen.0.position-cmd
 net xpos-fb stepgen.0.position-fb => axis.0.motor-pos-fb
 net xstep <= stepgen.0.step
 net xdir <= stepgen.0.dir
 net xenable axis.0.amp-enable-out => stepgen.0.enable
-net home-x => axis.0.home-sw-in
+net min-home-x => axis.0.home-sw-in
+net min-home-x => axis.0.neg-lim-sw-in
 
 setp stepgen.1.position-scale [AXIS_1]SCALE
-setp stepgen.1.steplen 1000
-setp stepgen.1.stepspace 0
-setp stepgen.1.dirhold 200
-setp stepgen.1.dirsetup 200
+setp stepgen.1.steplen 1200
+setp stepgen.1.stepspace 1200
+setp stepgen.1.dirhold 1000
+setp stepgen.1.dirsetup 5000
 setp stepgen.1.maxaccel [AXIS_1]STEPGEN_MAXACCEL
 net ypos-cmd axis.1.motor-pos-cmd => stepgen.1.position-cmd
 net ypos-fb stepgen.1.position-fb => axis.1.motor-pos-fb
 net ystep <= stepgen.1.step
 net ydir <= stepgen.1.dir
 net yenable axis.1.amp-enable-out => stepgen.1.enable
-net home-y => axis.1.home-sw-in
+net max-home-y => axis.1.home-sw-in
+net max-home-y => axis.1.pos-lim-sw-in
 
-setp stepgen.2.position-scale [AXIS_6]SCALE
-setp stepgen.2.steplen 1000
-setp stepgen.2.stepspace 0
-setp stepgen.2.dirhold 200
-setp stepgen.2.dirsetup 200
-setp stepgen.2.maxaccel [AXIS_6]STEPGEN_MAXACCEL
-net upos-cmd axis.6.motor-pos-cmd => stepgen.2.position-cmd
-net upos-fb stepgen.2.position-fb => axis.6.motor-pos-fb
-net ustep <= stepgen.2.step
-net udir <= stepgen.2.dir
-net uenable axis.6.amp-enable-out => stepgen.2.enable
+setp stepgen.2.position-scale [AXIS_8]SCALE
+setp stepgen.2.steplen 1200
+setp stepgen.2.stepspace 1200
+setp stepgen.2.dirhold 1000
+setp stepgen.2.dirsetup 5000
+setp stepgen.2.maxaccel [AXIS_8]STEPGEN_MAXACCEL
+net wpos-cmd axis.8.motor-pos-cmd => stepgen.2.position-cmd
+net wpos-fb stepgen.2.position-fb => axis.8.motor-pos-fb
+net wstep <= stepgen.2.step
+net wdir <= stepgen.2.dir
+net wenable axis.8.amp-enable-out => stepgen.2.enable
+net both-w => axis.8.neg-lim-sw-in
+net both-w => axis.8.pos-lim-sw-in
 
 net zpos-cmd-fb <= axis.2.motor-pos-cmd => axis.2.motor-pos-fb
-
-net estop-out <= iocontrol.0.user-enable-out
-net estop-out => iocontrol.0.emc-enable-in
 
 net tool-change-loop iocontrol.0.tool-change => iocontrol.0.tool-changed
 net tool-prepare-loop iocontrol.0.tool-prepare => iocontrol.0.tool-prepared
@@ -119,7 +130,7 @@ net laser-dout <= motion.digital-out-00
 ########################
 
 loadrt laserfreq
-addf laserfreq.0.make-pulses laser-thread
+addf laserfreq.0.make-pulses base-thread
 addf laserfreq.0.update servo-thread
 setp laserfreq.0.duration [LASER]PULSED_CUT_DURATION
 net current-vel motion.current-vel => laserfreq.0.velocity
@@ -143,7 +154,7 @@ net xpos-jcmd axis.0.joint-pos-cmd => motion-offset-sub.in0
 net xpos-cmd  axis.0.motor-pos-cmd => motion-offset-sub.in1
 net motion-offset                  <= motion-offset-sub.out
 
-addf motion-offset-apply laser-thread
+addf motion-offset-apply base-thread
 net xpos-fb       => motion-offset-apply.in0
 net motion-offset => motion-offset-apply.in1
 net raster-pos-fb <= motion-offset-apply.out
@@ -156,11 +167,11 @@ loadrt streamer depth=256 cfg=bbf
 
 # The order of addf determines the order of execution.
 # Order these so that the inputs cascade correctly to the outputs:
-addf raster-pos-gt-comp laser-thread
-addf raster-read-lut laser-thread
-addf streamer.0 laser-thread
-addf raster-fire-lut laser-thread
-addf laser-final-lut laser-thread
+addf raster-pos-gt-comp base-thread
+addf raster-read-lut base-thread
+addf streamer.0 base-thread
+addf raster-fire-lut base-thread
+addf laser-final-lut base-thread
 
 net raster-fire  <= streamer.0.pin.0
 net raster-rev   <= streamer.0.pin.1
@@ -200,7 +211,7 @@ net laser-raster <= raster-fire-lut.out
 
 addf laser-magic-z-comp servo-thread
 net zpos-fb <= axis.2.joint-pos-fb => laser-magic-z-comp.in0
-setp laser-magic-z-comp.in1 0.0
+setp laser-magic-z-comp.in1 -0.0001
 net laser-magic-z <= laser-magic-z-comp.out
 
 ########################

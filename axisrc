@@ -16,8 +16,8 @@ laser_hide(widgets.view_p)
 commands.set_view_z()
 
 # Attach table U to traditional Pg Up/Dn
-bind_axis("Next", "Prior", 6)
-bind_axis("KP_Next", "KP_Prior", 6)
+bind_axis("Next", "Prior", 8)
+bind_axis("KP_Next", "KP_Prior", 8)
 
 # Make Z accessible with [] just in case
 bind_axis("bracketleft", "bracketright", 2)

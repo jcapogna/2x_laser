@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<pyvcp>
+	<button halpin="xy-touchoff" text="Touch-off X/Y"/>
+
+	<label>
+		<text>"PPI:"</text>
+		<font>("Helvetica",20)</font>
+	</label>
+	<bar>
+		<halpin>"ppi"</halpin>
+		<max_>500</max_>
+	</bar>
+
+	<label>
+		<text>"Power:"</text>
+		<font>("Helvetica",20)</font>
+	</label>
+	<bar>
+		<halpin>"power"</halpin>
+		<max_>1.0</max_>
+	</bar>
+
+	<hbox>
+                <label text="laser-master:"/>
+                <led halpin="laser-master"/>
+	</hbox>
+	<hbox>
+                <label text="laser-raster:"/>
+                <led halpin="laser-raster"/>
+	</hbox>
+	<hbox>
+                <label text="laser-dout:"/>
+                <led halpin="laser-dout"/>
+	</hbox>
+	<hbox>
+                <label text="laser-magic-z:"/>
+                <led halpin="laser-magic-z"/>
+		<button halpin="z-to-zero" text="Reset Z"/>
+	</hbox>
+	<hbox>
+                <label text="laser-pulsed:"/>
+                <led halpin="laser-pulsed"/>
+	</hbox>
+	<hbox>
+                <label text="laser-final:"/>
+                <led halpin="laser-final"/>
+	</hbox>
+</pyvcp>

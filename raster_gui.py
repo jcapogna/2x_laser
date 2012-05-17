@@ -9,7 +9,7 @@ def app():
 def image_not_found():
     import tkFileDialog, tkMessageBox
     app()
-    name = tkFileDialog.askopenfilename(title='M144 Raster Image',
+    name = tkFileDialog.askopenfilename(title='Raster Image',
 	initialfile='',
 	filetypes=[('Images',('*.png', '*.gif', '*.jpg', '*.tif', '*.bmp')),
 	           ('Any File', '*.*')])

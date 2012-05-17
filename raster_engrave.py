@@ -22,9 +22,10 @@ image = Image.open(image_name)
 print('(original size w=%u,h=%u)' % (img_w,img_h))
 
 # user defined parameters
-SPEED = 1080
+SPEED = 600
 ACCEL = 300
 laser_power = 0.15
+laser_on_time = 0.5
 is_metric = 0
 origin_x = 0
 origin_y = 0
@@ -38,8 +39,8 @@ raster_h = raster_w*float(img_h)/img_w
 XDPI = 200
 YDPI = 200
 
-# calc lead in + 10% fudge
-leadIn = (0.55*SPEED*SPEED/3600)/ACCEL
+# calc lead in + 100% fudge
+leadIn = (1.0*SPEED*SPEED/3600)/ACCEL
 #leadIn = 1
 
 # calc image raster size
@@ -85,8 +86,10 @@ if ( is_metric ):
     print('G21')
 else:
     print('G20')
-print('G64 P0.0001 Q0.0001')
-print('M68 E0 Q%0.3f' % laser_power)
+print('M63 P0 (turn off laser dout)')
+print('G0 Z0 (turn off magic z)')
+print('G64 P0.0001 Q0.0001 (minimal path blending)')
+print('M68 E0 Q%0.3f (set laser power level)' % laser_power)
 print('M3 S1 (master laser power on)')
 print('#<raster_speed> = %0.3f' % SPEED)
 
@@ -163,7 +166,7 @@ for y in xrange(0,pix_h):
         print('M68 E1 Q-5')
         print('M68 E2 Q%u (bits per float)' % BPF)
         print('M68 E1 Q-6')
-        print('M68 E2 Q1000000 (laser on time, ns)')
+        print('M68 E2 Q%d (laser on time, ns)' % (laser_on_time*1000000))
         print('M68 E1 Q-7')
         print('M68 E2 Q%0.3f (lead in)' % leadIn)
         print('M68 E1 Q-8')
@@ -174,9 +177,9 @@ for y in xrange(0,pix_h):
                 offset_i = X + float(first_non_zero + index*BPF)/XDPI*orientation_x
             else:
                 offset_i = X + (W - float(first_non_zero + index*BPF)/XDPI)*orientation_x
-            print('M67 E2 Q%u' % (bitval))
-            print('M67 E1 Q%u' % (index+1))
-            print('G1 X%0.3f' % offset_i)
+            print('M68 E2 Q%u' % (bitval))
+            print('M68 E1 Q%u' % (index+1))
+            #print('G1 X%0.3f' % offset_i)
 
         print('G1 X%0.3f' % offset_end)
         print('M1')

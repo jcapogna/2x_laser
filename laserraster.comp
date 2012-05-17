@@ -190,7 +190,7 @@ FUNCTION(make_pulses) {
 	laser_on = 0;
     }
     if ( raster_active ) {
-	hal_s32_t rawcounts_with_delay = rawcounts + m_delaySteps * raster_direction;
+	hal_s32_t rawcounts_with_delay = rawcounts - m_delaySteps * raster_direction;
 
         if ( (raster_direction > 0 && rawcounts < last_rawcounts) ||
 	     (raster_direction < 0 && rawcounts > last_rawcounts) )

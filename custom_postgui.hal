@@ -5,7 +5,11 @@
 # **** Use COMMANDED spindle velocity from EMC because no spindle encoder was specified
 # **** COMANDED velocity is signed so we use absolute component (abs.0) to remove sign
 
-net laser-freq => pyvcp.ppi
+loadrt abs
+addf abs.0 servo-thread
+net laser-freq-speed => abs.0.in
+
+net laser-freq-abs <= abs.0.out => pyvcp.ppi
 net laser-power-cmd => pyvcp.power
 
 net laser-master => pyvcp.laser-master

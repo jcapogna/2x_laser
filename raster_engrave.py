@@ -23,18 +23,18 @@ print('(original size w=%u,h=%u)' % (img_w,img_h))
 
 # user defined parameters
 SPEED = 600
-ACCEL = 300
+ACCEL = 270
 laser_power = 0.15
 laser_on_time = 0.5
 is_metric = 0
 origin_x = 0
 origin_y = 0
 # center, <top|middle|bottom><left|center|right>
-origin_loc = 'topleft'
+origin_loc = 'bottomleft'
 # for mirroring
 orientation_y = -1
 orientation_x = 1
-raster_w = 3
+raster_w = 5
 raster_h = raster_w*float(img_h)/img_w
 XDPI = 200
 YDPI = 200

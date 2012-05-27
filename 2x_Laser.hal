@@ -39,8 +39,9 @@ net laser-pwm <= pwmgen.0.pwm
 setp pwmgen.0.enable 1
 # pwm-freq 0 means PDM (pulse density modulation)
 setp pwmgen.0.pwm-freq 0
-setp pwmgen.0.scale 1
-setp pwmgen.0.offset 0
+setp pwmgen.0.max-dc 0.6
+setp pwmgen.0.scale 200
+setp pwmgen.0.offset 0.1
 setp pwmgen.0.dither-pwm true
 
 net coolant-mist <= iocontrol.0.coolant-mist

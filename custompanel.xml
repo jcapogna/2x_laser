@@ -1,48 +1,50 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <pyvcp>
-	<button halpin="xy-touchoff" text="Touch-off X/Y"/>
+    <hbox>
+        <led halpin="laser-master"/>
+        <label text="Laser Enabled"/>
+    </hbox>
+    <button halpin="xy-touchoff" text="Touch-off X/Y"/>
 
-	<label>
-		<text>"PPI:"</text>
-		<font>("Helvetica",20)</font>
-	</label>
-	<bar>
-		<halpin>"ppi"</halpin>
-		<max_>500</max_>
-	</bar>
+    <labelframe text="Pulses">
+        <hbox>
+            <led halpin="duty-cycle-mode"/>
+            <label text="Duty Cycle"/>
+            <led halpin="ppi-mode"/>
+            <label text="PPI"/>
+        </hbox>
+        <bar>
+            <halpin>"spindle"</halpin>
+            <max_>500</max_>
+        </bar>
+        <hbox>
+            <led halpin="laser-continuous"/>
+            <label text="Continuous fire"/>
+        </hbox>
+    </labelframe>
 
-	<label>
-		<text>"Power:"</text>
-		<font>("Helvetica",20)</font>
-	</label>
-	<bar>
-		<halpin>"power"</halpin>
-		<max_>1.0</max_>
-	</bar>
+    <labelframe text="Power">
+        <bar>
+            <halpin>"power"</halpin>
+            <max_>100</max_>
+        </bar>
+    </labelframe>
 
-	<hbox>
-                <label text="laser-master:"/>
-                <led halpin="laser-master"/>
-	</hbox>
-	<hbox>
-                <label text="laser-raster:"/>
-                <led halpin="laser-raster"/>
-	</hbox>
-	<hbox>
-                <label text="laser-dout:"/>
-                <led halpin="laser-dout"/>
-	</hbox>
-	<hbox>
-                <label text="laser-magic-z:"/>
-                <led halpin="laser-magic-z"/>
-		<button halpin="z-to-zero" text="Reset Z"/>
-	</hbox>
-	<hbox>
-                <label text="laser-pulsed:"/>
-                <led halpin="laser-pulsed"/>
-	</hbox>
-	<hbox>
-                <label text="laser-final:"/>
-                <led halpin="laser-final"/>
-	</hbox>
+    <labelframe text="Triggers">
+        <hbox>
+            <led halpin="laser-raster"/>
+            <label text="Raster"/>
+        </hbox>
+
+        <hbox>
+            <led halpin="laser-dout"/>
+            <label text="Digital Out 0"/>
+        </hbox>
+        <hbox>
+            <led halpin="laser-magic-z"/>
+            <label text="Magic Z"/>
+            <button halpin="z-to-zero" text="Reset Z"/>
+        </hbox>
+    </labelframe>
+
 </pyvcp>

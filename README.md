@@ -124,7 +124,7 @@ in 2x_Laser.ini.  Ignore AXIS_2, it is the imaginary Z axis.
 My build resulted in a maximum travel of 285x535mm.  These are the
 [AXIS_0]MAX_LIMIT and [AXIS_1]MAX_LIMIT.  Setting these correctly will keep
 you from banging into the physical endstops.  The 2.x build homes in the
-lower left, but you can cause EMC2 to automatically reposition anywhere
+lower left, but you can cause LinuxCNC to automatically reposition anywhere
 after homing with the [AXIS_0]HOME and [AXIS_1]HOME.
 
 If any axis moves backwards from what you expect, modify the parport

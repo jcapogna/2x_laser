@@ -96,7 +96,7 @@ Install the custom laser pulse HAL component.  The first command installs
 the necessary tools in case you don't have them.  For more information see
 http://wiki.linuxcnc.org/emcinfo.pl?ContributedComponents
 
-    sudo apt-get install emc2-dev build-essential
+    sudo apt-get install linuxcnc-dev build-essential
     sudo comp --install laserfreq.comp
     sudo comp --install laserraster.comp
 

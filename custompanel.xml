@@ -1,8 +1,43 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <pyvcp>
+
+  <hbox>
+    <label>
+       <text>"Cycle Time"</text>
+       <font>("Helvetica",14)</font>
+     </label>
+     <u32>
+        <halpin>"time-hours"</halpin>
+        <font>("Helvetica",14)</font>
+        <format>"2d"</format>
+      </u32>
+      <label>
+        <text>":"</text>
+        <font>("Helvetica",14)</font>
+      </label>
+      <u32>
+        <halpin>"time-minutes"</halpin>
+        <font>("Helvetica",14)</font>
+        <format>"02d"</format>
+      </u32>
+      <label>
+        <text>":"</text>
+        <font>("Helvetica",14)</font>
+        </label>
+      <u32>
+        <halpin>"time-seconds"</halpin>
+        <font>("Helvetica",14)</font>
+        <format>"02d"</format>
+      </u32>
+    </hbox>
+
     <hbox>
         <led halpin="laser-master"/>
         <label text="Laser Enabled"/>
+    </hbox>
+    <hbox>
+        <led halpin="air-assist"/>
+        <label text="Air Assist"/>
     </hbox>
     <button halpin="xy-touchoff" text="Touch-off X/Y"/>
 
@@ -46,5 +81,7 @@
             <button halpin="z-to-zero" text="Reset Z"/>
         </hbox>
     </labelframe>
+
+    <button halpin="laser-test-fire" text="Test fire laser"/>
 
 </pyvcp>

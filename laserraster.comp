@@ -69,12 +69,16 @@ FUNCTION(update) {
 
     if ( !enable ) return;
 
-    if ( data_index_s32 < 0 ) {
+    if ( data_index_s32 <= 0 ) {
 
         if ( data_index_s32 != s_lastIndex ) {
-	    if ( data_index_s32 == -1 ) {
+	    if ( data_index_s32 == 0 ) {
+                raster_active = 0;
+                rtapi_print("raster off\n");
+	    } else if ( data_index_s32 == -1 ) {
 	        // clear the step data array
 	        for (i=0;i<m_stepMaskLen;i++) { m_stepMask[i]=0; }
+                raster_active = 0;
                 rtapi_print("starting raster line\n");
 	    } else {
 		int do_init = 0;
@@ -135,10 +139,10 @@ FUNCTION(update) {
 	if ( data_index_s32 != s_lastIndex ) {
 	    int i;
             hal_u32_t src_bit_index_start;
-
+#ifdef RASTER_DATA_DEBUG
    	    rtapi_print("index=%d data=%f data_1_s64=0x%x%08x\n",
                 data_index_s32, data_1, (unsigned int)(data_1_s64>>32), (unsigned int)data_1_s64);
-
+#endif
             src_bit_index_start = (data_index_s32-1)*bits_per_float;
 
             for (i=0;i<bits_per_float;++i) {
@@ -150,8 +154,9 @@ FUNCTION(update) {
 
 		    if ( index_i >=0 && index_i < m_stepMaskLen ) {
 		        m_stepMask[index_i] |= (1<<index_b);
-            	        //rtapi_print("src=%u acaled=%u\n",src_bit_index,scaled_bit_index);
+#ifdef RASTER_DATA_DEBUG
             	        rtapi_print("setting index=%i bit=%i\n",index_i,index_b);
+#endif
 		    }
 		}
                 if ( i == bits_per_float-1 ) {
@@ -217,7 +222,9 @@ FUNCTION(make_pulses) {
 
 	    if ( index_i >=0 && index_i < m_stepMaskLen ) {
 	        if ( m_stepMask[index_i] & (1<<index_b) ) {
+#ifdef RASTER_POS_DEBUG
           	    rtapi_print("laser-on bit=%u\n",bit_index);
+#endif
 		    laser_on = 1;
 		    pulse_remain = laser_on_time;
                 }

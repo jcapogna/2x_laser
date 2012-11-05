@@ -6,7 +6,7 @@ G20
 M63 P0 (turn off laser dout)
 G0 Z0 (turn off magic z)
 G64 P0.0001 Q0.0001 (minimal path blending)
-M68 E0 Q0.150 (set laser power level)
+M68 E0 Q15.000 (set laser power level)
 M3 S1 (master laser power on)
 #<raster_speed> = 600.000
 / F[#<raster_speed>]
@@ -91692,4 +91692,5 @@ M68 E2 Q65660084289407
 M68 E1 Q19
 G1 X-0.370
 M1
+M68 E1 Q0 (end raster)
 %

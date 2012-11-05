@@ -24,7 +24,7 @@ print('(original size w=%u,h=%u)' % (img_w,img_h))
 # user defined parameters
 SPEED = 600
 ACCEL = 270
-laser_power = 0.15
+laser_power = 15
 laser_on_time = 0.5
 is_metric = 0
 origin_x = 0
@@ -187,5 +187,6 @@ for y in xrange(0,pix_h):
     # next line is reverse direction
     forward = not forward
 
+print('M68 E1 Q0 (end raster)')
 
 print('%')

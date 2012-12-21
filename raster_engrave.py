@@ -91,16 +91,30 @@ print('G0 Z0 (turn off magic z)')
 print('G64 P0.0001 Q0.0001 (minimal path blending)')
 print('M68 E0 Q%0.3f (set laser power level)' % laser_power)
 print('M3 S1 (master laser power on)')
-print('#<raster_speed> = %0.3f' % SPEED)
+print('#<rs> = %s (raster speed)' % (('%0.4f'%SPEED).rstrip('0').rstrip('.')))
 
 # gcode skip lines that show raster image run box
-print('/ F[#<raster_speed>]')
-print('/ G0 X%0.3f Y%0.3f' % (X,Y))
-print('/ G1 X%0.3f Y%0.3f' % (X+W*orientation_x,Y))
-print('/ G1 X%0.3f Y%0.3f' % (X+W*orientation_x,Y+H*orientation_y))
-print('/ G1 X%0.3f Y%0.3f' % (X,Y+H*orientation_y))
-print('/ G1 X%0.3f Y%0.3f' % (X,Y))
+print('/ F[#<rs>]')
+print('/ G0 X%0.4f Y%0.4f' % (X,Y))
+print('/ G1 X%0.4f Y%0.4f' % (X+W*orientation_x,Y))
+print('/ G1 X%0.4f Y%0.4f' % (X+W*orientation_x,Y+H*orientation_y))
+print('/ G1 X%0.4f Y%0.4f' % (X,Y+H*orientation_y))
+print('/ G1 X%0.4f Y%0.4f' % (X,Y))
 print('/ M2')
+
+header_save = dict()
+
+def print_header(num,desc,data,save):
+    if not save or num not in header_save or header_save[num] != data:
+        try:
+            float(data)
+            val = ('%0.4f' % (data)).rstrip('0').rstrip('.')
+        except ValueError:
+            val = data
+        print('M68 E2 Q%s (%s)' % (val,desc))
+        print('M68 E1 Q-%d' % num)
+        header_save[num] = data
+    return
 
 forward = 1
 
@@ -130,7 +144,11 @@ for y in xrange(0,pix_h):
         # figure out how many max bpf floats to hold the data and
         # then evenly distribute the bits
         total_bits = last_non_zero - first_non_zero + 1;
-        BPF = ceil(total_bits / (ceil(float(total_bits) / MAX_BPF)))
+
+        # to calculate a BPF value that spreads the updates evently
+        #BPF = ceil(total_bits / (ceil(float(total_bits) / MAX_BPF)))
+        # just use the max
+        BPF = MAX_BPF
 
         bits = []
         i=0
@@ -153,23 +171,16 @@ for y in xrange(0,pix_h):
             offset_start = X + (W - float(first_non_zero)/XDPI + leadIn)*orientation_x
             offset_end = X + (W - float(last_non_zero+1)/XDPI - leadIn)*orientation_x
 
-        print('G0 X%0.3f Y%0.3f' % (offset_start,offset_y))
-        print('F[#<raster_speed>]')
+        print('M1')
+        print('G0 X%0.4f Y%0.4f' % (offset_start,offset_y))
         print('M68 E1 Q-1 (start new line)')
-        print('M68 E2 Q%d (gcode is metric 0=no,1=yes)' % is_metric)
-        print('M68 E1 Q-2')
-        print('M68 E2 Q[#<raster_speed>] (speed, in/min or mm/min)')
-        print('M68 E1 Q-3')
-        print('M68 E2 Q%d (direction)' % (1 if forward else -1))
-        print('M68 E1 Q-4')
-        print('M68 E2 Q%0.3f (dpi)' % XDPI)
-        print('M68 E1 Q-5')
-        print('M68 E2 Q%u (bits per float)' % BPF)
-        print('M68 E1 Q-6')
-        print('M68 E2 Q%d (laser on time, ns)' % (laser_on_time*1000000))
-        print('M68 E1 Q-7')
-        print('M68 E2 Q%0.3f (lead in)' % leadIn)
-        print('M68 E1 Q-8')
+        print_header(2, 'gcode is metric 0=no,1=yes', is_metric, True)
+        print_header(3, 'speed, in/min or mm/min', '[#<rs>]', True)
+        print_header(4, 'direction', (1 if forward else -1), True)
+        print_header(5, 'dpi', XDPI, True)
+        print_header(6, 'bits per float', BPF, True)
+        print_header(7, 'laser on time, ns', (laser_on_time*1000000), True)
+        print_header(8, 'lead in', leadIn, True)
         print('(raster data start)')
 
         for index, bitval in enumerate(bits):
@@ -179,14 +190,14 @@ for y in xrange(0,pix_h):
                 offset_i = X + (W - float(first_non_zero + index*BPF)/XDPI)*orientation_x
             print('M68 E2 Q%u' % (bitval))
             print('M68 E1 Q%u' % (index+1))
-            #print('G1 X%0.3f' % offset_i)
 
-        print('G1 X%0.3f' % offset_end)
-        print('M1')
+        print('G1 X%0.4f F[#<rs>]' % offset_end)
 
     # next line is reverse direction
     forward = not forward
 
 print('M68 E1 Q0 (end raster)')
 
+print('G0 X%0.4f Y%0.4f (go to start)' % (X,Y))
 print('%')
+

@@ -1,3 +1,5 @@
+5/15/13: It has been a year since I posted this config and I am still using it to run my 2.x laser and am very satisfied with the results.
+
 Overview
 ========
 

@@ -1,6 +1,6 @@
 O146 sub
   M4 S100 (% dutycycle)
-  M68 E0 Q15.0 (% power)
+  M68 E0 Q30.0 (% power)
   G1 Z-0.01 F10
   G0 Z0
   M2

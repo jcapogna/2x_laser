@@ -39,7 +39,12 @@
         <led halpin="air-assist"/>
         <label text="Air Assist"/>
     </hbox>
+    <hbox>
+        <led halpin="laser-exhaust"/>
+        <label text="Exhaust fan"/>
+    </hbox>
     <button halpin="xy-touchoff" text="Touch-off X/Y"/>
+    <button halpin="move-origin" text="Move to origin"/>
 
     <labelframe text="Pulses">
         <hbox>

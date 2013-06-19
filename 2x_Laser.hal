@@ -39,7 +39,8 @@ net laser-pwm <= pwmgen.0.pwm
 setp pwmgen.0.enable 1
 # pwm-freq 0 means PDM (pulse density modulation)
 setp pwmgen.0.pwm-freq 0
-setp pwmgen.0.max-dc 0.6
+# scale 0%=0.1 100%=0.6
+setp pwmgen.0.max-dc 0.7
 setp pwmgen.0.scale 200
 setp pwmgen.0.offset 0.1
 setp pwmgen.0.dither-pwm true
@@ -48,7 +49,7 @@ net coolant-mist <= iocontrol.0.coolant-mist
 net estop-out <= iocontrol.0.user-enable-out
 net estop-out => iocontrol.0.emc-enable-in
 
-net estop-out => parport.0.pin-01-out
+#net estop-out => parport.0.pin-01-out
 net xstep => parport.0.pin-02-out
 # setp parport.0.pin-02-out-reset 1
 net xdir => parport.0.pin-03-out
@@ -63,6 +64,8 @@ net wdir => parport.0.pin-07-out
 setp parport.0.pin-07-out-invert 1
 net xenable => parport.0.pin-08-out
 setp parport.0.pin-08-out-invert 1
+
+net laser-exhaust => parport.0.pin-01-out
 net laser-pwm => parport.0.pin-14-out
 net coolant-mist => parport.0.pin-16-out
 net laser-final => parport.0.pin-17-out
@@ -114,8 +117,8 @@ net wpos-fb stepgen.2.position-fb => axis.8.motor-pos-fb
 net wstep <= stepgen.2.step
 net wdir <= stepgen.2.dir
 net wenable axis.8.amp-enable-out => stepgen.2.enable
-net both-w => axis.8.neg-lim-sw-in
-net both-w => axis.8.pos-lim-sw-in
+#net both-w => axis.8.neg-lim-sw-in
+#net both-w => axis.8.pos-lim-sw-in
 
 net zpos-cmd-fb <= axis.2.motor-pos-cmd => axis.2.motor-pos-fb
 
@@ -178,20 +181,20 @@ net  laser-master      => laser-final-lut.in-4
 net laser-final <= laser-final-lut.out
 
 ########################
-# chiller/assist-air control
+# exhaust/assist-air control
 
-loadrt oneshot names=laser-chiller-oneshot
-loadrt or2 names=laser-chiller-or
-addf laser-chiller-oneshot servo-thread
-addf laser-chiller-or servo-thread
+loadrt oneshot names=laser-exhaust-oneshot
+loadrt or2 names=laser-exhaust-or
+addf laser-exhaust-oneshot servo-thread
+addf laser-exhaust-or servo-thread
 
-net laser-master        => laser-chiller-oneshot.in
-net laser-chiller-extra <= laser-chiller-oneshot.out
-setp laser-chiller-oneshot.retriggerable 1
-setp laser-chiller-oneshot.width [LASER]EXTRA_CHILLER_TIME
-setp laser-chiller-oneshot.rising 0
-setp laser-chiller-oneshot.falling 1
+net laser-master        => laser-exhaust-oneshot.in
+net laser-exhaust-extra <= laser-exhaust-oneshot.out
+setp laser-exhaust-oneshot.retriggerable 1
+setp laser-exhaust-oneshot.width [LASER]EXTRA_EXHAUST_TIME
+setp laser-exhaust-oneshot.rising 0
+setp laser-exhaust-oneshot.falling 1
 
-net laser-master        => laser-chiller-or.in0
-net laser-chiller-extra => laser-chiller-or.in1
-net laser-chiller       <= laser-chiller-or.out
+net laser-master        => laser-exhaust-or.in0
+net laser-exhaust-extra => laser-exhaust-or.in1
+net laser-exhaust       <= laser-exhaust-or.out

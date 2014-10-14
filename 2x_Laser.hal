@@ -7,7 +7,7 @@ loadrt threads name1=base-thread period1=[EMCMOT]BASE_PERIOD fp1=0 name2=charge-
 loadrt trivkins
 loadrt [EMCMOT]EMCMOT servo_period_nsec=[EMCMOT]SERVO_PERIOD num_joints=[TRAJ]AXES
 loadrt probe_parport
-loadrt hal_parport cfg="0x378 out"
+loadrt hal_parport cfg="0xe800 out"
 # setp parport.0.reset-time 1200
 loadrt stepgen step_type=0,0,0
 loadrt pwmgen output_type=0

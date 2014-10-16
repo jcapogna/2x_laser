@@ -8,7 +8,7 @@ loadrt trivkins
 loadrt [EMCMOT]EMCMOT servo_period_nsec=[EMCMOT]SERVO_PERIOD num_joints=[TRAJ]AXES
 loadrt probe_parport
 loadrt hal_parport cfg="0xe800 out"
-# setp parport.0.reset-time 1200
+setp parport.0.reset-time 1000
 loadrt stepgen step_type=0,0,0
 loadrt pwmgen output_type=0
 loadrt charge_pump
@@ -51,66 +51,63 @@ net estop-out => iocontrol.0.emc-enable-in
 
 #net estop-out => parport.0.pin-01-out
 net xstep => parport.0.pin-02-out
-# setp parport.0.pin-02-out-reset 1
+setp parport.0.pin-02-out-reset 1
 net xdir => parport.0.pin-03-out
-setp parport.0.pin-03-out-invert 0
+setp parport.0.pin-03-out-invert 1
 net ystep => parport.0.pin-04-out
-# setp parport.0.pin-04-out-reset 1
+setp parport.0.pin-04-out-reset 1
 net ydir => parport.0.pin-05-out
 setp parport.0.pin-05-out-invert 1
 net wstep => parport.0.pin-06-out
-# setp parport.0.pin-06-out-reset 1
+setp parport.0.pin-06-out-reset 1
 net wdir => parport.0.pin-07-out
 setp parport.0.pin-07-out-invert 1
-net xenable => parport.0.pin-08-out
+net xenable => parport.0.pin-16-out
 setp parport.0.pin-08-out-invert 1
 
 net laser-exhaust => parport.0.pin-01-out
 net laser-pwm => parport.0.pin-14-out
-net coolant-mist => parport.0.pin-16-out
+net coolant-mist => parport.0.pin-08-out
 net laser-final => parport.0.pin-17-out
 
-net both-w <= parport.0.pin-12-in-not
-net max-home-y <= parport.0.pin-13-in-not
-net min-home-x <= parport.0.pin-15-in-not
+net home-x <= parport.0.pin-10-in-not
+net home-y <= parport.0.pin-11-in-not
 
 # charge pump output on pin 9
 net charge-pump-out-09 charge-pump.out => parport.0.pin-09-out
 
-# Keling 4030 driver 1.2us step, 5us dir setup
+# based on Pololu drivers with Allegro drivers (1us ea hi/lo step, 200ns dir setup/hold)
 setp stepgen.0.position-scale [AXIS_0]SCALE
-setp stepgen.0.steplen 1200
-setp stepgen.0.stepspace 1200
-setp stepgen.0.dirhold 1000
-setp stepgen.0.dirsetup 5000
+setp stepgen.0.steplen 1000
+setp stepgen.0.stepspace 0
+setp stepgen.0.dirhold 200
+setp stepgen.0.dirsetup 200
 setp stepgen.0.maxaccel [AXIS_0]STEPGEN_MAXACCEL
 net xpos-cmd axis.0.motor-pos-cmd => stepgen.0.position-cmd
 net xpos-fb stepgen.0.position-fb => axis.0.motor-pos-fb
 net xstep <= stepgen.0.step
 net xdir <= stepgen.0.dir
 net xenable axis.0.amp-enable-out => stepgen.0.enable
-net min-home-x => axis.0.home-sw-in
-net min-home-x => axis.0.neg-lim-sw-in
+net home-x => axis.0.home-sw-in
 
 setp stepgen.1.position-scale [AXIS_1]SCALE
-setp stepgen.1.steplen 1200
-setp stepgen.1.stepspace 1200
-setp stepgen.1.dirhold 1000
-setp stepgen.1.dirsetup 5000
+setp stepgen.1.steplen 1000
+setp stepgen.1.stepspace 0
+setp stepgen.1.dirhold 200
+setp stepgen.1.dirsetup 200
 setp stepgen.1.maxaccel [AXIS_1]STEPGEN_MAXACCEL
 net ypos-cmd axis.1.motor-pos-cmd => stepgen.1.position-cmd
 net ypos-fb stepgen.1.position-fb => axis.1.motor-pos-fb
 net ystep <= stepgen.1.step
 net ydir <= stepgen.1.dir
 net yenable axis.1.amp-enable-out => stepgen.1.enable
-net max-home-y => axis.1.home-sw-in
-net max-home-y => axis.1.pos-lim-sw-in
+net home-y => axis.1.home-sw-in
 
 setp stepgen.2.position-scale [AXIS_8]SCALE
-setp stepgen.2.steplen 1200
-setp stepgen.2.stepspace 1200
-setp stepgen.2.dirhold 1000
-setp stepgen.2.dirsetup 5000
+setp stepgen.2.steplen 1000
+setp stepgen.2.stepspace 0
+setp stepgen.2.dirhold 200
+setp stepgen.2.dirsetup 200
 setp stepgen.2.maxaccel [AXIS_8]STEPGEN_MAXACCEL
 net wpos-cmd axis.8.motor-pos-cmd => stepgen.2.position-cmd
 net wpos-fb stepgen.2.position-fb => axis.8.motor-pos-fb

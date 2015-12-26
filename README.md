@@ -1,4 +1,7 @@
-4/15/13: It has been a year since I posted this config and I am still using it to run my 2.x laser and am very satisfied with the results.
+This is jcapogna's fork of the 2x_laser config for LinuxCNC. It has been tweaked for running on a stock buildlog.net 2.x laser cutter. 
+
+2015-12-26: Setup homing for w-axis. 
+
 
 Overview
 ========

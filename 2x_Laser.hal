@@ -72,6 +72,7 @@ net laser-final => parport.0.pin-17-out
 
 net home-x <= parport.0.pin-10-in-not
 net home-y <= parport.0.pin-11-in-not
+net home-w <= parport.0.pin-13-in-not
 
 # charge pump output on pin 9
 net charge-pump-out-09 charge-pump.out => parport.0.pin-09-out
@@ -114,6 +115,7 @@ net wpos-fb stepgen.2.position-fb => axis.8.motor-pos-fb
 net wstep <= stepgen.2.step
 net wdir <= stepgen.2.dir
 net wenable axis.8.amp-enable-out => stepgen.2.enable
+net home-w => axis.8.home-sw-in
 #net both-w => axis.8.neg-lim-sw-in
 #net both-w => axis.8.pos-lim-sw-in
 
